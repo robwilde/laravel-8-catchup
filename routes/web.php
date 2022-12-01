@@ -14,19 +14,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $files = \Illuminate\Support\Facades\File::files(resource_path('post'));
-    $posts = [];
-
-    foreach($files as $file){
-        $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parseFile($file);
-
-        $posts[] = new \App\Models\Posts(
-            $document->title,
-            $document->excerpt,
-            $document->date,
-            $document->body
-        );
-    }
-
-    return $posts;
+    return view('posts', [
+        'posts' => \App\Models\Post::all(),
+    ]);
 });
+
+Route::get('posts/{post}', function ($slug) {
+    return view('post', [
+        'post' => \App\Models\Post::find($slug),
+    ]);
+})->where('post', '[A-z_\-]+');
